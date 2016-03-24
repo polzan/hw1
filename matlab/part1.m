@@ -2,7 +2,7 @@ close all;
 clear all;
 
 % params 
-K = 10000;
+K = 1000;
 sigma2w = 1.26;
 f_1 = 0.125;
 f_2 = 0.8;
@@ -31,13 +31,13 @@ psd_per = 1/K * abs(X).^2;
 % Welch
 D = 50;
 S = 10;
-w = rectwin(D);
-Mw = 1/D * (w'*w);
+win = rectwin(D);
+Mw = 1/D * (win'*win);
 %psd_welch_matlab = pwelch(x, w, S, K);
 N_s = floor((K - D) / (D - S) + 1);
 psd_w = zeros(K, N_s);
 for s = 0:N_s - 1
-    x_s = w .* x((s*(D-S) + 1):(s*(D-S) + D));
+    x_s = win .* x((s*(D-S) + 1):(s*(D-S) + D));
     X_s = fft(x_s, K);
     psd_w(:,s+1) = 1/(D*Mw) * abs(X_s).^2;
 end

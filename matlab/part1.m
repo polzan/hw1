@@ -31,13 +31,13 @@ psd_per = 1/K * abs(X).^2;
 % Welch
 D = 50;
 S = 10;
-win = rectwin(D);
-Mw = 1/D * (win'*win);
-%psd_welch_matlab = pwelch(x, w, S, K);
+win_welch = rectwin(D);
+Mw = 1/D * (win_welch'*win_welch);
+%psd_welch_matlab = pwelch(x, win_welch, S, K);
 N_s = floor((K - D) / (D - S) + 1);
 psd_w = zeros(K, N_s);
 for s = 0:N_s - 1
-    x_s = win .* x((s*(D-S) + 1):(s*(D-S) + D));
+    x_s = win_welch .* x((s*(D-S) + 1):(s*(D-S) + D));
     X_s = fft(x_s, K);
     psd_w(:,s+1) = 1/(D*Mw) * abs(X_s).^2;
 end

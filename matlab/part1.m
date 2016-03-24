@@ -44,6 +44,10 @@ end
 
 psd_welch = mean(psd_w, 2);
 
+% Correlogram
+r = autocorrelation_unbiased(x);
+psd_corr = fft(r);
+
 % AR model
 
 
@@ -60,4 +64,6 @@ plot(f, 10*log10(psd_per));
 %plot(f, 10*log10(psd_per_matlab));
 %plot(f, 10*log10(psd_welch_matlab));
 plot(f, 10*log10(psd_welch));
+plot(f, 10*log10(psd_corr));
+
 

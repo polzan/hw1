@@ -49,15 +49,15 @@ psd_welch = mean(psd_w, 2);
 
 % figure;
 % hold all;
-% plot(f, 20*log10(psd_w(:,1)));
-% plot(f, 20*log10(psd_w(:,2)));
-% plot(f, 20*log10(psd_w(:,3)));
+% plot(f, 10*log10(psd_w(:,1)));
+% plot(f, 10*log10(psd_w(:,2)));
+% plot(f, 10*log10(psd_w(:,3)));
 
 figure;
 hold all;
-plot(f, 20*log10(psd_theor));
-plot(f, 20*log10(psd_per));
-%plot(f, 20*log10(psd_per_matlab));
-%plot(f, 20*log10(psd_welch_matlab));
-plot(f, 20*log10(psd_welch));
+plot(f, 10*log10(psd_theor));
+plot(f, 10*log10(psd_per));
+%plot(f, 10*log10(psd_per_matlab));
+%plot(f, 10*log10(psd_welch_matlab));
+plot(f, 10*log10(psd_welch));
 

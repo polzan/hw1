@@ -46,7 +46,7 @@ psd_welch = mean(psd_w, 2);
 
 % Correlogram
 r = autocorrelation_unbiased(x);
-win_corr = rectwin(K);
+win_corr = blackman(K);
 psd_corr = fft(win_corr .* r);
 
 % AR model

@@ -79,11 +79,13 @@ psd_ar = 2*sigma2w .* abs(H).^2;
 
 figure;
 hold all;
-plot(f, 10*log10(psd_theor));
-plot(f, 10*log10(psd_per));
-%plot(f, 10*log10(psd_per_matlab));
-%plot(f, 10*log10(psd_welch_matlab));
-plot(f, 10*log10(psd_welch));
-plot(f, 10*log10(psd_corr));
+plot(f, 10*log10(abs(psd_corr)), 'LineWidth', 1.5);
+plot(f, 10*log10(abs(psd_per)), 'LineWidth', 1.5);
+plot(f, 10*log10(abs(psd_welch)), 'LineWidth', 1.5);
+plot(f, 10*log10(abs(psd_ar)), 'LineWidth', 1.5);
+plot(f, 10*log10(abs(psd_theor)), 'LineWidth', 1.5);
 
-
+legend('Correlogram', 'Periodogram', 'Welch', 'AR', 'Theoretical');
+ylabel('dB');
+xlabel('Hz');
+ylim([0 50]);

@@ -29,9 +29,9 @@ psd_per = 1/K * abs(X).^2;
 %psd_per_matlab = periodogram(x, rectwin(K), K).';
 
 % Welch
-D = 50;
-S = 10;
-win_welch = rectwin(D);
+D = 70;
+S = 20;
+win_welch = blackman(D);
 Mw = 1/D * (win_welch'*win_welch);
 %psd_welch_matlab = pwelch(x, win_welch, S, K);
 N_s = floor((K - D) / (D - S) + 1);

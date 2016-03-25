@@ -8,8 +8,8 @@ f_1 = 0.125;
 f_2 = 0.8;
 
 % r.v.s
-phi_1 = 2*pi*rand(K, 1);
-phi_2 = 2*pi*rand(K, 1);
+phi_1 = 2*pi*rand(1);
+phi_2 = 2*pi*rand(1);
 w = sqrt(sigma2w) * (randn(K, 1) + 1j * randn(K, 1));
 
 % generate the r.p. x

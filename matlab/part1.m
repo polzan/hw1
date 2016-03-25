@@ -50,13 +50,32 @@ win_corr = blackman(K);
 psd_corr = fft(win_corr .* r);
 
 % AR model
+N = 25;
+r_whole = autocorrelation_unbiased(x);
+r_trunc = r(1:N);
+R = toeplitz(r_trunc).';
 
+assert(all(R(:,1) == r_trunc));
+assert(all(R(:,2) == [conj(r_trunc(2)); r_trunc(1:N-1)]));
+assert(all(R(:,N) == flip(conj(r_trunc))));
 
+fprintf('The determinant of R is %f\n', det(R));
+r = r_whole(2:N+1);
+a = -inv(R) * r;
+
+sigma2w_estim = r_whole(1) + (r'*a);
+fprintf('The AR model estimates a noise power of %f\n', sigma2w_estim);
+
+H = freqz(1, a, 1000, 1, 'whole');
+
+%figure;
+%plot(f, 20*log10(abs(H)));
+
+psd_ar = 2*sigma2w .* abs(H).^2;
+
+% x2 = filter(1, a, w);
 % figure;
-% hold all;
-% plot(f, 10*log10(psd_w(:,1)));
-% plot(f, 10*log10(psd_w(:,2)));
-% plot(f, 10*log10(psd_w(:,3)));
+% plot(k, 20*log10(abs(x2 - x)));
 
 figure;
 hold all;

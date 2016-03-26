@@ -44,6 +44,13 @@ N = 16;
 psd_ar = psd_ar_estim(x, N);
 %psd_ar_matlab = pcov(x, N, K);
 
+%predictor
+N=4;
+[c_opt,f_n] = predictor(x, N);
+a = -c_opt;     %coeff of the error filter
+[z,p,k] = tf2zpk(a,1);
+zplane(z)   %zeros of pred. error filter
+
 figure;
 hold all;
 plot(f, 10*log10(abs(psd_corr)), 'LineWidth', 1.5);

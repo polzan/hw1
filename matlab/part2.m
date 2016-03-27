@@ -44,6 +44,7 @@ N = 16;
 psd_ar = psd_ar_estim(x, N);
 %psd_ar_matlab = pcov(x, N, K);
 
+
 figure;
 hold all;
 plot(f, 10*log10(abs(psd_corr)), 'LineWidth', 1.5);

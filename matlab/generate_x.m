@@ -1,4 +1,8 @@
-function [x, k] = generate_x(sigma2w, K, seed)
+function [x, k, w, phi_1, phi_2] = generate_x(sigma2w, K, seed)
+if nargin < 3
+    seed = 'shuffle';
+end
+
 % params
 f_1 = 0.125;
 f_2 = 0.8;

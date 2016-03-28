@@ -1,9 +1,9 @@
-function [psd, f] = theoretical_psd(sigma2w, K)
+function [psd, f] = theoretical_psd(sigma2w, f, Fs)
 % params
 f_1 = 0.125;
 f_2 = 0.8;
 
-f = transpose(linspace(0, 1, K));
+K = length(f);
 F = 1/K;
 psd = 2 * sigma2w * ones(K, 1); % Power of the complex gaussian
 i_1 = round(f_1 / F);

@@ -11,7 +11,7 @@ f_2 = 0.8;
 rngstate = rng(seed);
 phi_1 = 2*pi*rand(1);
 phi_2 = 2*pi*rand(1);
-w = sqrt(sigma2w) * (randn(K, 1) + 1j * randn(K, 1));
+w = sqrt(sigma2w/2) * (randn(K, 1) + 1j * randn(K, 1));  %sigma2w_i = sigma2w/2 (complex gaussian)
 rng(rngstate);
 
 % generate the r.p. x

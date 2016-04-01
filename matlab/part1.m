@@ -3,8 +3,6 @@ close all; clear all; clc;
 % params 
 K = 1000;
 sigma2w = 1.26;
-%f_1 = 0.125;
-%f_2 = 0.8;
 
 [x, k] = generate_x(sigma2w, K, 'shuffle');
 Fs = 1;
@@ -42,5 +40,5 @@ plot(f, 10*log10(abs(psd_theor)), 'LineWidth', 1.5);
 legend('Correlogram', 'Periodogram', 'Welch', 'AR', 'Theoretical');
 ylabel('dB');
 xlabel('Hz');
-ylim([0 50]);
+ylim([-10 40]);
 xlim([0 1]);

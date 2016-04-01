@@ -24,4 +24,4 @@ zplane(1,a);
 
 figure;
 diff = abs(w - f_n);
-plot(k, 20*log10(diff));
+plot(k, 20*log10(diff./abs(w)));

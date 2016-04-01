@@ -1,22 +1,14 @@
-close all;
-clear all;
+close all; clear all; clc;
 
 % params 
 K = 1000;
 sigma2w = 0.0002;
-f_1 = 0.125;
-f_2 = 0.8;
 
-% r.v.s
-phi_1 = 2*pi*rand(1);
-phi_2 = 2*pi*rand(1);
-w = sqrt(sigma2w) * (randn(K, 1) + 1j * randn(K, 1));
 
-% generate the r.p. x
-k = transpose(0:(K - 1));
-x = exp(1j*2*pi*f_1*k + phi_1) + exp(1j*2*pi*f_2*k + phi_2) + w;
-
-f = linspace(0, 1, K);
+load 'rng_seed'
+[x, k] = generate_x(sigma2w, K, rng_seed);
+Fs = 1;
+f = linspace(0, Fs, K);
 % Theoretical psd: F[r(n) = e^j... + e^j... + sigma2*delta] = delta(f - f_1)
 % + delta(f - f_2) + sigma2w
 psd_theor = 2 * sigma2w * ones(K, 1);

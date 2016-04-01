@@ -3,10 +3,9 @@ close all; clear all; clc;
 % params 
 K = 1000;
 sigma2w = 0.0002;
-%f_1 = 0.125;
-%f_2 = 0.8;
 
-[x, k] = generate_x(sigma2w, K, 'shuffle');
+load 'rng_seed'
+[x, k] = generate_x(sigma2w, K, rng_seed);
 Fs = 1;
 f = linspace(0, Fs, K);
 

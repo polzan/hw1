@@ -4,7 +4,8 @@ close all; clear all; clc;
 K = 1000;
 sigma2w = 1.26;
 
-[x, k] = generate_x(sigma2w, K, 'shuffle');
+load 'rng_seed'
+[x, k] = generate_x(sigma2w, K, rng_seed);
 Fs = 1;
 f = linspace(0, Fs, K);
 

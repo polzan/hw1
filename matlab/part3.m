@@ -13,6 +13,9 @@ f = linspace(0, Fs, K);
 N=2;
 [c, fn, a] = predictor(x,N);
 
+fprintf('The filter coefficents are:\n');
+disp(c);
+
 figure;
 [H, f] = freqz(1, a, 'whole', 1000, 1);
 subplot(2,1,1);

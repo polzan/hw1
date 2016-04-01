@@ -16,5 +16,5 @@ rng(rngstate);
 
 % generate the r.p. x
 k = transpose(0:(K - 1));
-x = exp(1j*2*pi*f_1*k + phi_1) + exp(1j*2*pi*f_2*k + phi_2) + w;
+x = exp(1j*(2*pi*f_1*k + phi_1)) + exp(1j*(2*pi*f_2*k + phi_2)) + w;
 end

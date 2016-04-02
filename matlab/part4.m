@@ -12,9 +12,10 @@ R = transpose(toeplitz(r_theo));
 lambdas = eig(R);
 
 %mu = 2/(max(lambdas) + min(lambdas)); % ? Max 2/M = 10000 ?
-mu = 0.1;
+mu = 1/(N*r_theo(1));     %the numerator is mu-tilde the quantity we have to report in the solution
 fprintf('Setting mu to %f\n', mu);
-fprintf('To be stable it should be under %f\n', 2/max(lambdas));
+%fprintf('To be stable it should be under %f\n', 2/max(lambdas));
+fprintf('To be stable it should be under %f\n', 2/(N*r_theo(1)));
 
 [c, e, y, k_c, k_ey] = lsm_predictor(x, N, mu);
 

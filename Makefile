@@ -1,4 +1,6 @@
-all: hw1.pdf
+all: hw1.pdf hw1_code.pdf
+
+hw1.pdf: hw1_code.pdf
 
 %.pdf: %.tex clean
 	pdflatex $<
@@ -9,4 +11,4 @@ clean:
 	rm *.aux || true
 	rm *.out || true
 
-.PHONY: clean
+.PHONY: clean all

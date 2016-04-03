@@ -36,6 +36,10 @@
   \left \lVert #1 \right \rVert
 }
 
+\newcommand{\abs}[1]{
+  \left| #1 \right|
+}
+
 \author{Enrico Polo \and Riccardo Zanol}
 \title{Homework 1}
 
@@ -80,14 +84,64 @@ This is repeated until time $k = K - 2$ since the last known sample of
 the input $x(K-1)$ is needed to compute the value of the error
 function $e(K-2)$.
 
-We choose $N = 2$ as the order of the filter like in Problem 3 and we
+We choose $N = 2$ as the order of the filter like in problem 3 and we
 also use the realization of $x(k)$ generated with the same seed
-value. The remaining parameter $\mu$ must be in the interval $\left[0,
-  \frac{2}{\lambda_{max}}\right]$, to ensure the convergence of
-$\E{\vec{c}(k)}$ to $\vec{c}_{opt}$ as $k$ goes to infinity, and in
-$\left[0, \frac{2}{Nr_x(0)}\right]$ to ensure the convergence of
-$\E{\norm{\vec{c}(k) - \vec{c}_{opt}}^2}$ to a constant value. The
-value we choose is $\mu_{opt} = \frac{2}{Nr_x(0)}$ since it is the one
-that provides the maximum convergence rate of $J(k)$
+value. The remaining parameter $\mu$ must be in the interval $
+\left[0,\frac{2}{Nr_x(0)}\right] $ to ensure the convergence in the
+mean square sense of $\vec{c}_{opt}$ and $J(k)$. The value we choose
+is $\mu_{opt} = \frac{1}{Nr_x(0)}$ since it is the one that provides
+the maximum convergence rate of $J(k)$ when $J(k) \gg J_{min}$. For
+the signal power $r_x(0)$ we use the theoretical value, but the
+unbiased estimator used in the previous problems would yield similar
+results.
+
+At the last iteration the filter coefficients assume the following
+values
+\begin{align*}
+  c_1(K-1) &= 1.0071  - 0.2479j \\
+  c_2(K-1) &= -0.8942 + 0.4401j
+\end{align*}
+these values are very close to the ones computed using the Wiener-Hopf
+solution at problem 3. The real and imaginary parts of the first two
+coefficients $c_1(k)$ and $c_2(k)$ are plotted as $k$ varies in
+Fig.~\ref{plot:coeff_lms_c1} and Fig.~\ref{plot:coeff_lms_c2} where we
+can notice that after $k= ...$ they are practically at the convergence
+values.
+%% \begin{table}[h]
+%%   \centering
+%%   \begin{tabular}{>{$}c<{$}>{$}c<{$}>{$}c<{$}}
+%%     \text{Coefficient} & \text{Real part} & \text{Imaginary part} \\
+%%     \hline
+%%     c_0 & 1.0071 & - 0.2479j \\
+%%     c_1 & -0.8942 & 0.4401j
+%%   \end{tabular}
+%%   \caption{Values of the LMS predictor coefficients at convegence}
+%%   \label{tab:coeff_lms}
+%% \end{table}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/coeff_lms_c1}
+  \caption{Real and imaginary parts of $c_1(k)$}
+  \label{plot:coeff_lms_c1}
+\end{figure}
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/coeff_lms_c2}
+  \caption{Real and imaginary parts of $c_2(k)$}
+  \label{plot:coeff_lms_c2}
+\end{figure}
+In Fig.~\ref{plot:lms_mse} we compare the error function $e(k)$
+computed in this realization with an average over 200 realizations.
+Along with $\abs{e(k)}^2$ and $\E{ \abs{e(k)}^2 }$ we plotted the minimum MSE
+$J_{min} = \sigma^2_d + \vec{p}^Hc_{opt}$ obtained when using the
+Wiener-Hopf solution, and the value that we expect as $k$ goes to
+infinity from equation 3.115 of the textbook:
+\[ J(\infty) = \frac{2}{2-\mu N r_x(0)}J_{min} \]
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/lms_mse}
+  \caption{LMS MSE}
+  \label{plot:lms_mse}
+\end{figure}
 \section*{Problem 5}
 \end{document}

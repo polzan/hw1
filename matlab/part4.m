@@ -7,15 +7,14 @@ sigma2w = 0.0002;
 load 'rng_seed'
 [x, k] = generate_x(sigma2w, K, rng_seed);
 
-r_theo = theoretical_autocorr(sigma2w, N-1);
-R = transpose(toeplitz(r_theo));
+r = autocorrelation_unbiased(x, N-1);
+R = transpose(toeplitz(r));
 lambdas = eig(R);
 
-%mu = 2/(max(lambdas) + min(lambdas)); % ? Max 2/M = 10000 ?
-mu = 0.5/(N*r_theo(1));     %the numerator is mu-tilde the quantity we have to report in the solution
+mu = 1/(N*r(1)); %the numerator is mu-tilde
 fprintf('Setting mu to %f\n', mu);
-%fprintf('To be stable it should be under %f\n', 2/max(lambdas));
-fprintf('To be stable it should be under %f\n', 2/(N*r_theo(1)));
+fprintf('To be stable it should be under %f (eigenvalues)\n', 2/max(lambdas));
+fprintf('To be stable it should be under %f (power)\n', 2/(N*r(1)));
 
 [c, e, y, k_c, k_ey] = lms_predictor(x, N, mu);
 

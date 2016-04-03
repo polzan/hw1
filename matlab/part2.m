@@ -12,8 +12,7 @@ f = linspace(0, Fs, K);
 psd_theor = theoretical_psd(sigma2w, f, Fs);
 
 % Periodogram
-X = 1/Fs * fft(x);
-psd_per = 1/K * abs(X).^2;
+psd_per = 1/K * abs(fft(x)).^2;
 
 % Welch
 D = 70;
@@ -24,11 +23,11 @@ psd_welch = psd_welch_estim(x, win_welch, D, S, f, Fs);
 % Correlogram
 r = autocorrelation_unbiased(x);
 win_corr = blackman(K);
-psd_corr = fft(win_corr .* r);
+psd_corr = 1/Fs * fft(win_corr .* r);
 
 % AR model
 N = 4;
-psd_ar = psd_ar_estim(x, N, f, 1);
+psd_ar = psd_ar_estim(x, N, f, Fs);
 
 figure;
 hold all;

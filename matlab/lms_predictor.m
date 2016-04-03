@@ -1,4 +1,4 @@
-function [c, e, y, k_c, k_ey] = lsm_predictor(x, N, mu)
+function [c, e, y, k_c, k_ey] = lms_predictor(x, N, mu)
 K = length(x);
 % Skip the first N-1 samples: we need a full vector x_k
 c = zeros(N, K-N+1);

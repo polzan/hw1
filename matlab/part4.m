@@ -12,12 +12,12 @@ R = transpose(toeplitz(r_theo));
 lambdas = eig(R);
 
 %mu = 2/(max(lambdas) + min(lambdas)); % ? Max 2/M = 10000 ?
-mu = 1/(N*r_theo(1));     %the numerator is mu-tilde the quantity we have to report in the solution
+mu = 0.5/(N*r_theo(1));     %the numerator is mu-tilde the quantity we have to report in the solution
 fprintf('Setting mu to %f\n', mu);
 %fprintf('To be stable it should be under %f\n', 2/max(lambdas));
 fprintf('To be stable it should be under %f\n', 2/(N*r_theo(1)));
 
-[c, e, y, k_c, k_ey] = lsm_predictor(x, N, mu);
+[c, e, y, k_c, k_ey] = lms_predictor(x, N, mu);
 
 fprintf('The value of c at the last iteration is\n');
 disp(c(:,K-N+1).');
@@ -48,7 +48,7 @@ tries=200;
 es = zeros(K-N, tries);
 for i=1:200
     [x,k] = generate_x(sigma2w, K, 'shuffle');
-    [~, e_i] = lsm_predictor(x, N, mu);
+    [~, e_i] = lms_predictor(x, N, mu);
     es(:,i) = e_i;
 end
 

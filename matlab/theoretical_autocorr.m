@@ -5,5 +5,5 @@ f_2 = 0.8;
 
 n = transpose(0:N);
 r = exp(1j*2*pi*f_1*n) + exp(1j*2*pi*f_2*n);
-r(1) = sigma2w;
+r(1) = r(1) + sigma2w; %correct autocorr
 end

@@ -38,10 +38,10 @@ plot(k_c, imag(c(2,:)));
 xlim([0 200]);
 
 
-% figure;
-% hold on;
-% plot(0:K-1, real(x));
-% plot(N:K-1, real(y));
+figure;
+hold on;
+plot(k, real(x));
+plot(k_ey, real(y));
 
 tries=200;
 es = zeros(K-N, tries);
@@ -57,3 +57,4 @@ figure;
 hold on;
 plot(k_ey, 10*log10(abs(e).^2));
 plot(k_ey, 10*log10(mse));
+xlim([0 200]);

@@ -3,7 +3,7 @@ if nargin < 3
     autocorr_type = 'unbiased';    
 end
 
-if nargin < 4 && strcmp(autocorr_type, 'theoretical')
+if nargin < 4 && ~strcmp(autocorr_type, 'theoretical')
     theor_noise_pow = NaN;
 end
 

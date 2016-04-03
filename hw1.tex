@@ -24,6 +24,18 @@
   \lstinline[basicstyle=\ttfamily,keywordstyle={}]{#1}
 }
 
+\renewcommand{\vec}[1]{
+  \underline{#1}
+}
+
+\newcommand{\E}[1]{
+  \operatorname{E}\left[ #1 \right]
+}
+
+\newcommand{\norm}[1]{
+  \left \lVert #1 \right \rVert
+}
+
 \author{Enrico Polo \and Riccardo Zanol}
 \title{Homework 1}
 
@@ -47,5 +59,35 @@
 \section*{Problem 2}
 \section*{Problem 3}
 \section*{Problem 4}
+To implement the LMS predictor we use the algorithm described in
+section 3.1.2 of the textbook. The function \inlinecode{lms_predictor}
+(Lst.~\ref{lst:lms_predictor}) starts at time $k=N-1$, because it
+needs $N$ samples from the input signal $x(k)$, and at each
+time instant:
+\begin{itemize}
+  \item extracts from $x(k)$ the vector $\vec{x}_k = [x(k),
+    x(k-1),\dots,x(k-N+1)]^T$ that is the input to the Wiener filter
+    at time $k$ {\color{red} si chiama veramente così anche questo?}
+  \item computes the filter output $y(k) =
+    \sum_{n=0}^{N-1}c_n(k)x(k-n) = \vec{x}_k^H\vec{c}(k)$
+  \item computes the error $e(k) = d(k) - y(k)$ where $d(k) = x(k+1)$
+    since we want the filter to predict the next sample of the random
+    process $x(k)$
+  \item computes the filter coefficients that will be used at the next
+    time instant $\vec{c}(k+1) = \vec{c}_k + \mu e(k) \vec{x}_k^*$
+\end{itemize}
+This is repeated until time $k = K - 2$ since the last known sample of
+the input $x(K-1)$ is needed to compute the value of the error
+function $e(K-2)$.
+
+We choose $N = 2$ as the order of the filter like in Problem 3 and we
+also use the realization of $x(k)$ generated with the same seed
+value. The remaining parameter $\mu$ must be in the interval $\left[0,
+  \frac{2}{\lambda_{max}}\right]$, to ensure the convergence of
+$\E{\vec{c}(k)}$ to $\vec{c}_{opt}$ as $k$ goes to infinity, and in
+$\left[0, \frac{2}{Nr_x(0)}\right]$ to ensure the convergence of
+$\E{\norm{\vec{c}(k) - \vec{c}_{opt}}^2}$ to a constant value. The
+value we choose is $\mu_{opt} = \frac{2}{Nr_x(0)}$ since it is the one
+that provides the maximum convergence rate of $J(k)$
 \section*{Problem 5}
 \end{document}

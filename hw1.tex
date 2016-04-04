@@ -72,41 +72,57 @@ time instant:
   \item extracts from $x(k)$ the vector $\vec{x}_k = [x(k),
     x(k-1),\dots,x(k-N+1)]^T$ that is the input to the Wiener filter
     at time $k$ {\color{red} si chiama veramente così anche questo?}
-  \item computes the filter output $y(k) =
-    \sum_{n=0}^{N-1}c_n(k)x(k-n) = \vec{x}_k^H\vec{c}(k)$
+  \item computes the filter output $y(k) = \vec{x}_k^H\vec{c}(k)$
   \item computes the error $e(k) = d(k) - y(k)$ where $d(k) = x(k+1)$
     since we want the filter to predict the next sample of the random
     process $x(k)$
   \item computes the filter coefficients that will be used at the next
-    time instant $\vec{c}(k+1) = \vec{c}_k + \mu e(k) \vec{x}_k^*$
+    iteration $\vec{c}(k+1) = \vec{c}_k + \mu e(k) \vec{x}_k^*$
 \end{itemize}
 This is repeated until time $k = K - 2$ since the last known sample of
 the input $x(K-1)$ is needed to compute the value of the error
 function $e(K-2)$.
 
-We choose $N = 2$ as the order of the filter like in problem 3 and we
-also use the realization of $x(k)$ generated with the same seed
-value. The remaining parameter $\mu$ must be in the interval $
-\left[0,\frac{2}{Nr_x(0)}\right] $ to ensure the convergence in the
-mean square sense of $\vec{c}_{opt}$ and $J(k)$. The value we choose
-is $\mu_{opt} = \frac{1}{Nr_x(0)}$ since it is the one that provides
-the maximum convergence rate of $J(k)$ when $J(k) \gg J_{min}$. For
-the signal power $r_x(0)$ we use the theoretical value, but the
-unbiased estimator used in the previous problems would yield similar
-results.
+The parameters of the LMS algorithm are the order of the filter $N$
+and the adaptation gain $\mu$ and for the first one we choose $N = 2$
+because we want to compare the results with the ones from problem 3
+{\color{red} e anche perchè il filtro Wiener usa gli stessi
+  coefficienti del modello AR?}.  The second parameter $\mu$ must be
+chosen in the interval $\left[0,\frac{2}{Nr_x(0)}\right]$ in order to
+ensure the convergence of $\vec{c}(k)$ and $e(k)$ in the mean sense
+and in the mean square sense,
+%% \begin{align*}
+%%   \E{\vec{c}(k)} &\rightarrow \vec{c}_{opt} &\text{as} \quad k \rightarrow \infty \\
+%%   \E{e(k)} &\rightarrow 0  &\text{as} \quad k \rightarrow \infty \\
+%%   \\
+%%   \E{\norm{\vec{c}(k)-\vec{c}_{opt}}^2} &\rightarrow \text{constant} &\text{as} \quad k \rightarrow \infty \\
+%%   \E{\abs{e(k)}^2} &\rightarrow \text{constant} &\text{as} \quad k \rightarrow \infty 
+%% \end{align*}
+where we used as the input autocorrelation $r_x(n)$ {\color{red} the
+  theoretical one}.  We tried the choice that yields the fastest rate
+of convergence of $J(k)$, when $J(k) \gg J_{min}$, from equation
+(3.121) of the textbook: $\mu_{opt} = \frac{1}{Nr_x(0)}$. This value
+of $\mu$ does make the LMS algorithm converge very quickly but the
+value of the MSE at convergence $J(\infty)$ is {\color{red} almost 5
+  dB} over $J_{min}$. A smaller value, like $\tilde{\mu} = 0.25$,
+  provides a good tradeoff between speed of convergence and MSE.
 
-At the last iteration the filter coefficients assume the following
-values
+  The input signal $x(k)$ is generated with the same seed value of
+  problem 3 for the random number generator so it is the same
+  realization.
+
+  After running the LMS predictor we get the following filter
+  coefficients at the last iteration
 \begin{align*}
-  c_1(K-1) &= 1.0071  - 0.2479j \\
-  c_2(K-1) &= -0.8942 + 0.4401j
+  c_1(K-1) &= 1.0146 - 0.2445j   \\
+  c_2(K-1) &= -0.8912 + 0.4518j
 \end{align*}
-these values are very close to the ones computed using the Wiener-Hopf
-solution at problem 3. The real and imaginary parts of the first two
-coefficients $c_1(k)$ and $c_2(k)$ are plotted as $k$ varies in
-Fig.~\ref{plot:coeff_lms_c1} and Fig.~\ref{plot:coeff_lms_c2} where we
-can notice that after $k= ...$ they are practically at the convergence
-values.
+{\color{red} these values are very close} to the ones we computed
+using the Wiener-Hopf solution at problem 3. The real and imaginary
+parts of the two coefficients $c_1(k)$ and $c_2(k)$ are plotted as $k$
+varies in Fig.~\ref{plot:coeff_lms_c1} and
+Fig.~\ref{plot:coeff_lms_c2} where we can notice that after $k \approx 100$
+samples they are practically at their convergence values.
 %% \begin{table}[h]
 %%   \centering
 %%   \begin{tabular}{>{$}c<{$}>{$}c<{$}>{$}c<{$}}
@@ -130,18 +146,28 @@ values.
   \caption{Real and imaginary parts of $c_2(k)$}
   \label{plot:coeff_lms_c2}
 \end{figure}
-In Fig.~\ref{plot:lms_mse} we compare the error function $e(k)$
-computed in this realization with an average over 200 realizations.
-Along with $\abs{e(k)}^2$ and $\E{ \abs{e(k)}^2 }$ we plotted the minimum MSE
-$J_{min} = \sigma^2_d + \vec{p}^Hc_{opt}$ obtained when using the
-Wiener-Hopf solution, and the value that we expect as $k$ goes to
-infinity from equation 3.115 of the textbook:
+
+In Fig.~\ref{plot:lms_mse} we compare the prediction error function
+$e(k)$ obtained from this realization of $x(k)$ with an average over
+200 other realizations of the same input signal.  Along with
+$\abs{e(k)}^2$ and $\E{ \abs{e(k)}^2 }$ we plotted the minimum MSE
+$J_{min} = \sigma^2_x + \vec{r_N}^Hc_{opt}$ obtained when using the
+Wiener-Hopf solution in problem 3 and the value that we expect as $k$
+goes to infinity from equation (3.115) of the textbook:
 \[ J(\infty) = \frac{2}{2-\mu N r_x(0)}J_{min} \]
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{matlab/lms_mse}
-  \caption{LMS MSE}
+  \caption{Square error of the LMS predictor}
   \label{plot:lms_mse}
 \end{figure}
+From this plot we can see that the MSE of the predictor converges to a
+constant value close to {\color{red} the minimum possible MSE
+  attainable by a linear predictor $J_{min}$} and the value of the MSE
+at convergence remains 0.000088 {\color{red} meglio in dB?} over the
+optimal value.
+%% in accordance with
+%% what we would expect from equation (3.117) of the textbook:
+%% \[ J_{ex}(\infty) \approx \frac{\mu}{2}Nr_x(0)J_{min}  . \]
 \section*{Problem 5}
 \end{document}

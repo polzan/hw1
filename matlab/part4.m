@@ -12,7 +12,9 @@ r = theoretical_autocorr(sigma2w, N-1);
 R = transpose(toeplitz(r));
 lambdas = eig(R);
 
-mu = 1/(N*r(1)); %the numerator is mu-tilde
+mu_tilde = 0.25;
+mu = mu_tilde/(N*r(1)); %the numerator is mu-tilde
+fprintf('Setting mu tilde to %f\n', mu_tilde);
 fprintf('Setting mu to %f\n', mu);
 fprintf('To be stable it should be under %f (eigenvalues)\n', 2/max(lambdas));
 fprintf('To be stable it should be under %f (power)\n', 2/(N*r(1)));
@@ -56,10 +58,10 @@ ylabel('Imaginary part');
 xlim([0 200]);
 print('coeff_lms_c2', '-depsc');
 
-figure;
-hold on;
-plot(k, real(x));
-plot(k_ey, real(y));
+% figure;
+% hold on;
+% plot(k, real(x));
+% plot(k_ey, real(y));
 
 tries=200;
 es = zeros(K-N, tries);

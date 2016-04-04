@@ -15,8 +15,8 @@ psd_theor = theoretical_psd(sigma2w, f, Fs);
 psd_per = 1/K * abs(fft(x)).^2;
 
 % Welch
-D = 70;
-S = 20;
+D = 100;
+S = 25;
 win_welch = blackman(D);
 psd_welch = psd_welch_estim(x, win_welch, D, S, f, Fs);
 
@@ -26,7 +26,7 @@ win_corr = blackman(K);
 psd_corr = 1/Fs * fft(win_corr .* r);
 
 % AR model
-N = 4;
+N = 2;
 psd_ar = psd_ar_estim(x, N, f, Fs);
 
 figure;

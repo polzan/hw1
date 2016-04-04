@@ -15,9 +15,9 @@ psd_theor = theoretical_psd(sigma2w, f, Fs);
 psd_per = 1/K * abs(fft(x)).^2;
 
 % Welch
-D = 70;
-S = 20;
-win_welch = blackman(D);
+D = 100;
+S = 25;
+win_welch = rectwin(D);
 psd_welch = psd_welch_estim(x, win_welch, D, S, f, Fs);
 
 % Correlogram

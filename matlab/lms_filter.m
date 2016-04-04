@@ -1,6 +1,6 @@
 function [c, e, y, k_c, k_ey] = lms_filter(d, x, N, mu)
 K = length(d);
-assert(length(x) >= K -(N-1) - 1);
+assert(length(x) >= K-1);
 % Skip the first N-1 samples: we need a full vector x_k
 c = zeros(N, K-N+1);
 y = zeros(K-N, 1);

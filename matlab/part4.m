@@ -34,13 +34,13 @@ hold on;
 plot(k_c, real(c(1,:)));
 plot(0:K-1, real(c_opt(1)) * ones(K, 1), '--');
 ylabel('Real part');
-xlim([0 200]);
+xlim([0 120]);
 subplot(1,2,2);
 hold on;
 plot(k_c, imag(c(1,:)));
 plot(0:K-1, imag(c_opt(1)) * ones(K, 1), '--');
 ylabel('Imaginary part');
-xlim([0 200]);
+xlim([0 120]);
 print('coeff_lms_c1', '-depsc');
 
 figure;
@@ -49,13 +49,13 @@ hold on;
 plot(k_c, real(c(2,:)));
 plot(0:K-1, real(c_opt(2)) * ones(K, 1), '--');
 ylabel('Real part');
-xlim([0 200]);
+xlim([0 120]);
 subplot(1,2,2);
 hold on;
 plot(k_c, imag(c(2,:)));
 plot(0:K-1, imag(c_opt(2)) * ones(K, 1), '--');
 ylabel('Imaginary part');
-xlim([0 200]);
+xlim([0 120]);
 print('coeff_lms_c2', '-depsc');
 
 % figure;
@@ -72,8 +72,8 @@ for i=1:200
 end
 
 mse = mean(abs(es).^2, 2);
-
-
+Jex = Jinf -  Jmin;
+fprintf('The excess MSE is %f\n', Jex);
 
 figure;
 hold on;
@@ -83,5 +83,5 @@ plot(0:K-1, 10*log10(Jmin) * ones(K, 1), '--');
 plot(0:K-1, 10*log10(Jinf) * ones(K, 1), '--');
 legend('|e|^2', 'E[|e|^2]', 'Jmin', 'Jinf');
 ylabel('dB');
-xlim([0 200]);
+xlim([0 120]);
 print('lms_mse', '-depsc');

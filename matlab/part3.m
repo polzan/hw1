@@ -24,5 +24,5 @@ subplot(2,1,2);
 plot(f, angle(H) / pi);
 
 figure;
-%[z, p, k] = tf2zpk(1, a);
-zplane(1,a);
+[z, p, k] = tf2zpk(1, a);
+zplane(z,p);

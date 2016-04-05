@@ -17,28 +17,18 @@
 \definecolor{matlabgreen}{RGB}{28,172,0}
 \definecolor{matlablilas}{RGB}{170,55,241}
 
-\newcommand{\includecode}[1]{
-  \lstinputlisting[caption={\ttfamily #1.m}, label={lst:#1}]{matlab/#1.m}
-}
-\newcommand{\inlinecode}[1]{
-  \lstinline[basicstyle=\ttfamily,keywordstyle={}]{#1}
-}
+\newcommand{\includecode}[1]{\lstinputlisting[caption={\ttfamily #1.m},
+    label={lst:#1}]{matlab/#1.m}}
+\newcommand{\inlinecode}[1]{\lstinline[basicstyle=\ttfamily,
+    keywordstyle={}]{#1}}
 
-\renewcommand{\vec}[1]{
-  \underline{#1}
-}
+\renewcommand{\vec}[1]{\underline{#1}}
 
-\newcommand{\E}[1]{
-  \operatorname{E}\left[ #1 \right]
-}
+\newcommand{\E}[1]{\operatorname{E}\left[#1\right]}
 
-\newcommand{\norm}[1]{
-  \left \lVert #1 \right \rVert
-}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 
-\newcommand{\abs}[1]{
-  \left| #1 \right|
-}
+\newcommand{\abs}[1]{\left|#1\right|}
 
 \author{Enrico Polo \and Riccardo Zanol}
 \title{Homework 1}
@@ -170,4 +160,48 @@ optimal value.
 %% what we would expect from equation (3.117) of the textbook:
 %% \[ J_{ex}(\infty) \approx \frac{\mu}{2}Nr_x(0)J_{min}  . \]
 \section*{Problem 5}
+To determine if a random process contains spectral lines, and to
+separate them from the broadband component of the signal we can use a
+LMS adaptive filter in the way depicted in
+Fig.~\ref{sch:lms_delay}. In this schema we use the original random
+process $x(k)$ as the desired output $d(k)$ of the LMS filter and its
+delayed version $x(k - D)$ as the input of the filter. If we choose a
+big enough $D$ the broadband component of the delayed signal becomes
+uncorrelated from the original signal, while the correlation of the
+narrowband components is not affected by the delay as it is periodic.
+So the filter tries to minimize the error $e(k) = x(k) - y(k)$ by
+suppressing the broadband component of its input signal and leaving
+the spectral lines unaltered, in this way we get as output $y(k)$ the
+spectral lines of the original process and as error function $e(k)$ we
+get the broadband component of $x(k)$.  In our case the broadband
+component is just white noise, so any $D \geq 1$ is enough, we choose
+$D=5$ {\color{red} just to be safe}. For the parameters of the LMS
+filter we choose the same order $N=2$ and the same $\tilde{\mu} =
+0.25$ of problem 4 as the {\color{red} input signal is the same}. The
+algorithm is implemented by extending the \inlinecode{lms_predictor}
+function to deal with a generic desired signal $d(k)$ (see
+\inlinecode{lms_filter}, Lst.~\ref{lst:lms_filter}).{\color{red} anche
+  i grafici delle uscite?}
+
+After we have extracted the spectral lines from the rest of the signal
+we can model them as an AR(N) process like in problems 1 and 2, with
+the same order $N$ as the LMS filter. Then from the estimated
+coefficients $a_i$ we compute the poles of the transfer function
+\[ \frac{1}{A(z)} = \frac{1}{\sum_{i=0}^{N}a_iz^{-i}} , \]
+from which we can obtain the angular frequency of each spectral line
+by taking the phase of the poles that lie on the unit circle.  In our
+code we consider a pole to be on the unit circle if its magnitude is
+$|p_i| \in [1-10^{-3},1+10^{-3}]$.
+
+When we increase the order $N$ beyond what is needed to model the
+signal we notice that the additional poles tend to move toward the
+unit circle as $N$ increases and at a certain point they fall below
+the threshold we have set and non-existent spectral lines are detected
+by the algorithm. The magnitude of the poles associated to the true
+spectral lines also tends to be more close to one, so it may be
+possible to adjust the threshold as N increases. {\color{red} proviamo a fare i conti a vedere se viene una relazione da usare nell'algoritmo?}
+
+We could also model directly the signal $x(k)$ as an AR process
+without first separating it into the broadband and narrowband
+components, but in this way we also have the filtered signal.
 \end{document}

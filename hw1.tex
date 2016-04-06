@@ -50,8 +50,64 @@
 }
 \maketitle
 \section*{Problem 1}
+Before describing the results we obtained solving this point, we want to briefly describe some usefull functions we used several times to solve the homework:
+\begin{itemize}
+ \item the function \inlinecode{generate_x} (Lst.~\ref{lst:generate_x}) generates a realization of the required random process, given the variance of the Gaussian noise and the length of the realization (in number of samples) we want to consider;
+ \item the function \inlinecode{autocorrelation_unbiased} (Lst.~\ref{lst:autocorrelation_unbiased}) returns an unbiased estimator of the process autocorrelation given a process realization, by applying $\hat{r}_x(n) = \frac{1}{K-n} \sum_{k=n}^{K-1} {x(k)x^*(k-n)}$ for $n = 0,1,..N$ where N is the maximum lag we want to estimate ($0\leq N \leq K-1$);
+ \item the function \inlinecode{autocorrelation_biased} (Lst.~\ref{lst:autocorrelation_biased}) returns a biased estimator of the same quantity, starting from the unbiased one, through the relation $\breve{r}_x(n) = \bigl( 1 - \frac{|n|}{K}\bigr) \hat{r}_x(n)$ for $n = 0,1,..N$;
+ \item  the function \inlinecode{theoretical_autocorr} (Lst.~\ref{lst:theoretical_autocorr}) gives us the values of the autocorrelation function obtained by analisys $r_x (n) =  \E{x(k)x^*(k-n)}$ that in our case is: $r_x (n) = e^{j2 \pi f_1n} + e^{j2\pi f_2n} + \sigma_\omega^2 \delta_n$.
+ %\item the function \inlinecode{ar_model} (Lst.~\ref{lst:ar_model}) takes in input a %realization of the process, the order of the filter and the kind of autocorrelation %estimator we want to use; and returns the filter coefficients (formula) and the estimated %noise power of our AR model (formula).
+\end{itemize}
+To solve Problem 1 we firstly computed our reference PSD by using the \inlinecode{theoretical_psd} (Lst.~\ref{lst:theoretical_psd}) function. It computes the PSD as the sum of the costant $\sigma_\omega^2$ (PSD of the white noise, given in input) and the two spectral lines in $f1$ and $f2$ (replaced by triangles of height $K$ and base $2K$ as required). In our settings we consider $T_c = F_s = 1$.
+%\newline In order to estimate the PSD by anaysing a realization of the process we have %used an unbiased estimator $\hat{r}_x(n)$ because it is the one with the smaller variance %and, by testing, it give us the better results.
+\begin{itemize}
+ \item[a)] For the Correlogram method, we implement the relation \newline $P_{cor}(f) = T_c \sum_{k=-L}^{L} w(k)\hat{r}(k)e^{-j 2 \pi n f T_c}$. To reduce the variance of our estimator we set $L=\frac{K}{5}$ and considered only the first 200 samples. Than by simmetry we found the values of $\hat{r}(n)$ also for negative lags (setting $true$ the value of the last optional parameter of \inlinecode{autocorrelation_unbiased}). In our tests we have obtained good results by using the rectangular window, so we choose this one because gives the best frequency resolution.(????)
+ \item[b)] To obtain the Periodogram we just apply $P_{PER} = \frac{1}{K T_c} |\tilde{X}(f)|^2$ to the whole realization, with $\tilde{X}(f)$ obtained doing the fft of $\hat{r}_x(n)$.
+ \item[c)] For the Welch method we have implemented the \inlinecode{psd_welch_estim} (Lst.~\ref{lst:psd_welch_estim}) function. The input parameters we need to set correctly in order to reach the best results are:
+ \begin{itemize}
+ \item the kind of window we want to use $w$,
+ \item the length of each subsequence we are considering $D$, 
+ \item the number of samples we want to overlapp between two consecutive sequences $S$. 
+\end{itemize} 
+The function uses the $D$ and $S$ values to find the number of segments $N_s = \bigl\lfloor \frac{K-D}{D-S} -1\bigl\rfloor $ in which we are dividing our signal. Computes the normalized energy of the choosen window $M_w = \frac{1}{D} \sum_{k=1}^{D} {w(k)^2} $ and for each segment (s) computes the Periodogram $P_{PER}^{(s)} = \frac{1}{D T_c M_w} |\tilde{X}(f)|$. Stored the value of each $P_{PER}^{(s)}$ in the columns of an auxiliary matrix we finally do the mean between columns to finally get $P_{we}(f) = \frac{1}{N_s} \sum_{s=0}^{N_s-1} P_{PER}^{(s)} $
+\newline Doing some tests we find that a suitable value of $D$ is 100 samples and for $S$ is 25 samples. With this choise we have enough samples per segment and enough segments to perform a useful mean between the $P_{PER}^{(s)}$.
+\newline Also in this case we choose a rectangular window (like in point a) because is the one with the narrowest central lobe in the frequency domain.
+\item[d)]For the AR model the main function we have used the is \inlinecode{psd_ar_estim} (Lst.~\ref{lst:psd_ar_estim}). It computes the AR filter coeficients  and estimate the power of the needed input noise by using \inlinecode{ar_model} (Lst.~\ref{lst:ar_model}). This last function requires the process $x$, the order of the AR filter we want to use $N$ and the kind of correlatione estimator we want to use (we must give also the value of $\sigma_\omega^2$ to use the theoretical autocorrelation $r_x (n)$). Once estimeted the autocorrelation function for lags from 0 to N samples, it computes the relative $NxN$ autocorrelation matrix $R$ (lags from 0 to N-1), the vector $\vec{r} = [r_x (1), r_x (2), ...,r_x (N)]^T$ and solve the sistem $R \vec{a} = - \vec{r}$. Finally it computes the noise power $\sigma_\omega^2$ by the relation $\sigma_\omega^2 = r_x(0) + \vec{r}^H \vec{a}$. In this case we started from a realization of the process so we used an unbiased estimator $\hat{r}(n)$ instead of $r_x (n)$. 
+\newline Then the main function computes the freqency response of the filter $A(f)$ and extimates the PSD of the process through $P_{ar} = \sigma_\omega^2 T_c \frac{1}{|A(f)|^2}$ (also in this case we consider $T_c=1$).
+\newline In our tests we tried to find the best order $N$ of the filter. We find that an order two filter should be enough, but in this case we find that the configuration with $N = 4$  is the one that best approximates the ideal shape.
+\end{itemize}
+In Fig. ~\ref{plot:psd_comparison_126} we can see the comparison between the estimated PSDs choosing for each method the parameters we have reported above and the ideal one.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/psd_comparison_126}
+  \caption{PSDs comparison ($\sigma_\omega^2 = 1.26$)}
+    \label{plot:psd_comparison_126}
+\end{figure}
 \section*{Problem 2}
+For problem two the functions used are the same, but bacause we have a significant lower value of $\sigma_\omega^2 = 0.0002 << 1.26$ we have to find a new optimal configuration. In particular while point and b) is still the same of the previous point (it have no parameters to set), we need to find a proper setting for the Correlogram, the Whelch and AR methods:
+\begin{itemize}
+ \item[a)] in the Correlogram method we need to change the window we are using. In fact by using a rectangolar window like in Problem 1 we notice that between the two spectral lines the PSD is much higher then it would be. So we used a window that decreases faster to zero (in frequency domain) and we have good results with the Hanning and the Blackman. We choose the Hanning because is better with reguards of the frequency resolution.
+ \item[c)] for the Welch method, by testing, we don't find relaevant differeces by changing the values of $D$ or $S$. For the choise of the window we obtain the same results of the point a) so we choose an Hanning window.
+ \item[d)] For the AR model we tried to increase $N$ in order to obtain better results (compared to the ideal PSD) but we find that for $N\geq 3$ the $P_{ar}$ starts to show some peaks that are not due to the signal. In fact recalling the formula $P_{ar} = \sigma_\omega^2 T_c \frac{1}{|A(f)|^2}$ we see that the sistem may become unstable if the magnitude of the zeros of $A(f)$ isn't smaller then 1. It happens for $N\geq3$, so in this point we choose $N=2$. 
+\end{itemize}
+In Fig. ~\ref{plot:psd_comparison_002} are plotted the PSDs we have obtained with this new configuration.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/psd_comparison_002}
+  \caption{PSDs comparison ($\sigma_\omega^2 = 0.0002$)}
+  \label{plot:psd_comparison_002}
+\end{figure}
 \section*{Problem 3}
+To solve this problem we use the function \inlinecode{predictor} (Lst.~\ref{lst:predictor}). This function calls the function \inlinecode{ar_model} with the attribute '$tehoretical$' in order to compute the ideal coefficents of the AR(N) model of our process. So we get $ \vec{a} = [1, a1, a2,...a_N]^T $, and by using the relation for the optimum predictor $ \vec{a} = [1,-\vec{c}_{opt}]^T $ we find $ \vec{c}_{opt} = -[a1, a2,...a_N]^T$. The parameter we need to find in this case is ($N$) the order of the predictor. We started from $N=2$ and find $J_{min} = 6.1832\cdot10^{-4}$, than for $N=3$ we find $J_{min} = 3.3586\cdot10^{-4}$ that is a half of the previus value. If we try to increase more the value of $N$ the error $J_{min}$ it's quite the same, so we decided to stop to $N=3$ because we don't have a significant improvement of the performaces of our sistem by increasing it's complexity.
+With this configuration we find: $c_{opt_1} = 0.3588 -j0.0862$,  $c_{opt_2} = -0.2616 +j0.1333$ and $c_{opt_3} = -0.5139 +j0.4390$.
+\newline In Fig.~\ref{plot:predictor_zp} are plotted the zeros and the poles of the predictor error filter A(z). 
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/predictor_zp}
+  \caption{Plot of the zeros and poles of the predictor error filter}
+  \label{plot:predictor_zp}
+\end{figure}
+
 \section*{Problem 4}
 To implement the LMS predictor we use the algorithm described in
 section 3.1.2 of the textbook. The function \inlinecode{lms_predictor}

@@ -1,7 +1,7 @@
 close all; clear all; clc;
 
 K = 1000;
-N = 2; % Must be the same one of part3
+N = 3; % Must be the same one of part3
 sigma2w = 0.0002;
 
 load 'rng_seed'
@@ -12,7 +12,7 @@ r = theoretical_autocorr(sigma2w, N-1);
 R = transpose(toeplitz(r));
 lambdas = eig(R);
 
-mu_tilde = 0.25;
+mu_tilde = 0.175;
 mu = mu_tilde/(N*r(1)); %the numerator is mu-tilde
 fprintf('Setting mu tilde to %f\n', mu_tilde);
 fprintf('Setting mu to %f\n', mu);

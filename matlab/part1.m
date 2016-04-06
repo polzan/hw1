@@ -42,3 +42,4 @@ ylabel('dB');
 xlabel('Hz');
 ylim([-10 40]);
 xlim([0 1]);
+print('psd_comparison_126', '-depsc');

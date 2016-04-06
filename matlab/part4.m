@@ -80,6 +80,7 @@ end
 mse = mean(abs(es).^2, 2);
 Jex = Jinf -  Jmin;
 fprintf('The excess MSE is %f\n', Jex);
+fprintf('The MSD is %f\n', Jex/Jmin);
 
 figure;
 hold on;

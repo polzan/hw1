@@ -87,7 +87,7 @@ In Fig. ~\ref{plot:psd_comparison_126} we can see the comparison between the est
 \section*{Problem 2}
 For problem two the functions used are the same, but bacause we have a significant lower value of $\sigma_\omega^2 = 0.0002 << 1.26$ we have to find a new optimal configuration. In particular while point and b) is still the same of the previous point (it have no parameters to set), we need to find a proper setting for the Correlogram, the Whelch and AR methods:
 \begin{itemize}
- \item[a)] in the Correlogram method we need to change the window we are using. In fact by using a rectangolar window like in Problem 1 we notice that between the two spectral lines the PSD is much higher then it would be. So we used a window that decreases faster to zero (in frequency domain) and we have good results with the Hanning and the Blackman. We choose the Hanning because is better with reguards of the frequency resolution.
+ \item[a)] in the Correlogram method we need to change the window we are using. In fact by using a rectangolar window like in Problem 1 we notice that between the two spectral lines the PSD is much higher then it would be. So we used a window that decreases faster to zero (in frequency domain) and we have good results with the Hanning and the Blackman. We choose the Hanning because is better with reguards of the frequency resolution. Unfortunately some kind of offset between the two peaks is still present.
  \item[c)] for the Welch method, by testing, we don't find relaevant differeces by changing the values of $D$ or $S$. For the choise of the window we obtain the same results of the point a) so we choose an Hanning window.
  \item[d)] For the AR model we tried to increase $N$ in order to obtain better results (compared to the ideal PSD) but we find that for $N\geq 3$ the $P_{ar}$ starts to show some peaks that are not due to the signal. In fact recalling the formula $P_{ar} = \sigma_\omega^2 T_c \frac{1}{|A(f)|^2}$ we see that the sistem may become unstable if the magnitude of the zeros of $A(f)$ isn't smaller then 1. It happens for $N\geq3$, so in this point we choose $N=2$. 
 \end{itemize}
@@ -99,16 +99,16 @@ In Fig. ~\ref{plot:psd_comparison_002} are plotted the PSDs we have obtained wit
   \label{plot:psd_comparison_002}
 \end{figure}
 \section*{Problem 3}
-To solve this problem we use the function \inlinecode{predictor} (Lst.~\ref{lst:predictor}). This function calls the function \inlinecode{ar_model} with the attribute '$tehoretical$' in order to compute the ideal coefficents of the AR(N) model of our process. So we get $ \vec{a} = [1, a1, a2,...a_N]^T $, and by using the relation for the optimum predictor $ \vec{a} = [1,-\vec{c}_{opt}]^T $ we find $ \vec{c}_{opt} = -[a1, a2,...a_N]^T$. The parameter we need to find in this case is ($N$) the order of the predictor. We started from $N=2$ and find $J_{min} = 6.1832\cdot10^{-4}$, than for $N=3$ we find $J_{min} = 3.3586\cdot10^{-4}$ that is a half of the previus value. If we try to increase more the value of $N$ the error $J_{min}$ it's quite the same, so we decided to stop to $N=3$ because we don't have a significant improvement of the performaces of our sistem by increasing it's complexity.
+To solve this problem we use the function \inlinecode{predictor} (Lst.~\ref{lst:predictor}). This function calls the function \inlinecode{ar_model} with the attribute '$tehoretical$' in order to compute the ideal coefficents of the AR(N) model of our process. So we get $ \vec{a} = [1, a_1, a_2,...a_N]^T $, and by using the relation for the optimum predictor $ \vec{a} = [1,-\vec{c}_{opt}]^T $ we find $ \vec{c}_{opt} = -[a_1, a_2,...a_N]^T$. The parameter we need to find in this case is ($N$) the order of the predictor. We started from $N=2$ and find $J_{min} = 6.1832\cdot10^{-4}$, than for $N=3$ we find $J_{min} = 3.3586\cdot10^{-4}$ that is a half of the previus value. If we try to increase more the value of $N$ the error $J_{min}$ it's quite the same, so we decided to stop to $N=3$ because we don't have a significant improvement of the performaces of our sistem by increasing it's complexity.
 With this configuration we find: $c_{opt_1} = 0.3588 -j0.0862$,  $c_{opt_2} = -0.2616 +j0.1333$ and $c_{opt_3} = -0.5139 +j0.4390$.
-\newline In Fig.~\ref{plot:predictor_zp} are plotted the zeros and the poles of the predictor error filter A(z). 
+\newline In Fig.~\ref{plot:predictor_zp} are plotted the zeros and the poles of the predictor error filter $A(z) = 1+a_1 z^{-1} + a_2 z^{-2} + a_3 z^{-3}$.
+We can see that two zeros of the filter (the one in the unit circle) are deleting the exponential part of the process, like we expect. 
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{matlab/predictor_zp}
   \caption{Plot of the zeros and poles of the predictor error filter}
   \label{plot:predictor_zp}
 \end{figure}
-
 \section*{Problem 4}
 To implement the LMS predictor we use the algorithm described in
 section 3.1.2 of the textbook. The function \inlinecode{lms_predictor}

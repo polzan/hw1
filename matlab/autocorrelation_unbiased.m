@@ -1,7 +1,10 @@
-function r = autocorrelation_unbiased(x, N)
+function r = autocorrelation_unbiased(x, N, whole)
 K = length(x);
 if nargin < 2
     N = K-1;
+end
+if nargin < 3
+    whole = false
 end
 
 s = size(x);
@@ -18,4 +21,9 @@ for n = 0:N
     x2 = x(1:K-n);
     r(n+1) = 1/(K-n) * (x2'*x1);
 end
+
+if whole
+r = [flip(conj(r(2:N+1)));r];
+end
+
 end

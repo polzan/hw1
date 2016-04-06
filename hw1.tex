@@ -57,7 +57,15 @@ Before describing the results we obtained solving this point, we want to briefly
  \item the function \inlinecode{autocorrelation_unbiased} (Lst.~\ref{lst:autocorrelation_unbiased}) returns an unbiased estimator of the process autocorrelation given a process realization, by applying $\hat{r}_x(n) = \frac{1}{K-n} \sum_{k=n}^{K-1} {x(k)x^*(k-n)}$ for $n = 0,1,..N$ where N is the maximum lag we want to estimate ($0\leq N \leq K-1$);
  \item the function \inlinecode{autocorrelation_biased} (Lst.~\ref{lst:autocorrelation_biased}) returns a biased estimator of the same quantity, starting from the unbiased one, through the relation $\breve{r}_x(n) = \bigl( 1 - \frac{|n|}{K}\bigr) \hat{r}_x(n)$ for $n = 0,1,..N$;
  \item  the function \inlinecode{theoretical_autocorr} (Lst.~\ref{lst:theoretical_autocorr}) gives us the values of the autocorrelation function obtained by analysis $r_x (n) =  \E{x(k)x^*(k-n)}$ that in our case is: $r_x (n) = e^{j2 \pi f_1n} + e^{j2\pi f_2n} + \sigma_w^2 \delta_n$.
- %\item the function \inlinecode{ar_model} (Lst.~\ref{lst:ar_model}) takes in input a %realization of the process, the order of the filter and the kind of autocorrelation %estimator we want to use; and returns the filter coefficients (formula) and the estimated %noise power of our AR model (formula).
+ \item the function \inlinecode{ar_model} (Lst.~\ref{lst:ar_model})
+   takes in input a realization of the process, the order of the
+   filter and the kind of autocorrelation estimator we want to use, it
+   solves the Yule-Walker equation
+   \[ R\vec{a} = -\vec{r} \]
+   and estimates the power of the white noise which is is the input of
+   the filter $\frac{1}{A(z)}$ in the AR model of the process using the equation
+   \[ \sigma^2_w = r_x(0) + \vec{r}^H\vec{a} . \]
+   Finally it returns the filter coefficients and the estimated $\sigma^2_w$.
 \end{itemize}
 To solve Problem 1 we firstly computed our reference PSD by using the \inlinecode{theoretical_psd} (Lst.~\ref{lst:theoretical_psd}) function. It computes the PSD as the sum of the constant $\sigma_w^2$ (PSD of the white noise, given in input) and the two spectral lines in $f1$ and $f2$ (replaced by triangles of height $K$ and base $2K$ as required). In our settings we consider $T_c = F_s = 1$.
 %\newline In order to estimate the PSD by anaysing a realization of the process we have %used an unbiased estimator $\hat{r}_x(n)$ because it is the one with the smaller variance %and, by testing, it give us the better results.
@@ -103,7 +111,7 @@ In Fig. ~\ref{plot:psd_comparison_002} are plotted the PSDs we have obtained wit
   \label{plot:psd_comparison_002}
 \end{figure}
 \section*{Problem 3}
-To solve this problem we use the function \inlinecode{predictor} (Lst.~\ref{lst:predictor}). This function calls the function \inlinecode{ar_model} with the attribute '$theoretical$' in order to compute the ideal coefficients of the AR(N) model of our process. So we get $ \vec{a} = [1, a_1, a_2,...a_N]^T $, and by using the relation for the optimum predictor $ \vec{a} = [1,-\vec{c}_{opt}]^T $ we find $ \vec{c}_{opt} = -[a_1, a_2,...a_N]^T$. The parameter we need to find in this case is ($N$) the order of the predictor. We started from $N=2$ and find $J_{min} = 6.1832\cdot10^{-4}$, than for $N=3$ we find $J_{min} = 3.3586\cdot10^{-4}$ that is a half of the previous value. If we try to increase more the value of $N$ the error $J_{min}$ it's quite the same, so we decided to stop to $N=3$ because we don't have a significant improvement of the performances of our system by increasing it's complexity.
+To solve this problem we use the function \inlinecode{predictor} (Lst.~\ref{lst:predictor}). This function calls the function \inlinecode{ar_model} with the attribute '$theoretical$' in order to compute the ideal coefficients of the AR(N) model of our process. So we get $ \vec{a} = [1, a_1, a_2,...a_N]^T $, and by using the relation for the optimum predictor $ \vec{a} = [1,-\vec{c}_{opt}]^T $ we find $ \vec{c}_{opt} = -[a_1, a_2,...a_N]^T$. The parameter we need to find in this case is ($N$) the order of the predictor. We started from $N=2$ and find $J_{min} = 6.1832\cdot10^{-4}$, than for $N=3$ we find $J_{min} = 3.3586\cdot10^{-4}$ that is a half of the previous value. If we try to increase more the value of $N$ the error $J_{min}$ does not decrease anymore, so we decided to stop to $N=3$ because we don't have a significant improvement of the performances of our system by increasing it's complexity.
 With this configuration we find: $c_{opt_1} = 0.3588 -j0.0862$,  $c_{opt_2} = -0.2616 +j0.1333$ and $c_{opt_3} = -0.5139 +j0.4390$.
 \newline In Fig.~\ref{plot:predictor_zp} are plotted the zeros and the poles of the predictor error filter $A(z) = 1+a_1 z^{-1} + a_2 z^{-2} + a_3 z^{-3}$.
 We can see that two zeros of the filter (the one in the unit circle) are deleting the exponential part of the process, like we expect. 

@@ -220,39 +220,51 @@ obtainable by a linear predictor, the MSD is now $0.096$.
 \section*{Problem 5}
 To determine if a random process contains spectral lines we can try to
 model it as an AR process and determine the lines' frequencies from
-the poles of the transfer function of the filter that generates the
-process from white noise. Since the lines have very high amplitude,
-they will correspond to some poles that are close to the unit circle,
-while the other poles will have a smaller magnitude (unless the PSD of
-the broadband component has an amplitude comparable to the one of the
-lines). After we have identified the poles associated to the spectral
-lines we can obtain the frequencies $f_i$ from the phases $\theta_i$
-of each pole traslated into the $[0,2\pi]$ interval: $f_i =
-\frac{\theta_i}{2\pi}F_s$.
+the poles of the transfer function
+\[ H(z) = \frac{1}{A(z)} = \frac{1}{\sum_{k=0}^{N-1}a_kz^{-k}} \]
+of the filter that generates the process $x(k)$ from white
+noise. Since the amplitude of the lines is very high, they will
+correspond to poles of $H(z)$ close to the unit circle, while the
+other poles will have a smaller magnitude (unless the PSD of the
+broadband component of $x(k)$ has an amplitude comparable to the one
+of the lines). After we have identified the poles associated to the
+spectral lines we can obtain the frequencies from the phases
+$\theta_i$ of each pole, translated into the $[0,2\pi]$ interval, as
+$f_i = \frac{\theta_i}{2\pi}F_s$.
 
-Since the Wiener-Hopf solution for the predictior filter and the
+Since the Wiener-Hopf solution for the predictor filter and the
 Yule-Walker equation that gives us the solution for the AR coefficients
 are similar:
-\[ R\vec{a} = -\vec{r} \]
+\begin{align*}
+  R_N\vec{c}_{opt} &= \vec{r_N} \\
+  R\vec{a} &= -\vec{r}
+\end{align*}
 we can approximate the coefficients $\vec{c}_{opt}$ using the same LMS
-algorithm used in problem 4 and get the AR coefficients as $ \vec{a} =
--\vec{c}_{opt}$. In this case we do not care about the power of the
-white noise input of the AR filter since we only need the position of
-the poles of the filter.
+algorithm used in problem 4 and then get the AR coefficients as $
+\vec{a} = -\vec{c}_{opt}$. In this case we do not care about the power
+of the white noise input of the AR filter since we only need the
+position of the poles of $H(z)$.
 
 The order of the LMS filter $N$ must be chosen to be at least equal to
 the number of spectral lines present in $x(k)$ to detect all of
-them. In our case $N=2$ would be enough, but we try with $N=64$ to see
+them. In our case $N=2$ would be enough, but we try with $N=32$ to see
 where the other poles end up. This time we do not care about the value
-at convergence of $\E{\abs{e(k)}^2}$, {\color{red} but we do about the
-  error of the coefficients $\E{\abs{\Delta}}$adaptive gain of the LMS
-  filter $\tilde{\mu} = 0.175$}
+at convergence of $\E{\abs{e(k)}^2}$, but we do want the mean square
+error of the coefficients $ \E{\norm{\Delta\vec{c}}^2} $ to be small,
+so the choice of $\tilde{\mu}$ must take into account that, according
+to equation (3.81) of the textbook extended to the general case, 
+\[ \E{\norm{\Delta\vec{c}}^2} \approx \frac{\mu}{2}J_{min} . \]
+If we use as input a realization of the same process of problems 2-4
+then $J_{min} = 1.7\cdot10^{-4}$ and we use an adaptive gain with
+$\tilde{\mu} = 1$, so that we maximize the speed of convergence, we
+get an MSE on the coefficents with an order of magnitude of $10^{-6}$,
+so we can use this value for $\tilde{\mu}$.
 
 If we consider each pole to be on the unit circle when its magnitude
 $|p_i|$ is in the interval $[1-10^{-2},1+10^{-2}]$ we can identify the
-frequencies of the two complex exponentials in the signal $x(k)$. In
-Fig.~\ref{plot:part5_poles} we can see the poles of the transfer
-function.
+frequencies of the two complex exponentials in the signal $x(k)$
+(\SI{0.125}{\Hz} and \SI{0.8}{\Hz}). In Fig.~\ref{plot:part5_poles} we
+can see the poles of the transfer function $H(z)$.
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{matlab/part5_poles}
@@ -260,13 +272,11 @@ function.
   \label{plot:part5_poles}
 \end{figure}
 
-When we increase the order $N$ beyond what is needed
-to model the signal we notice that the additional poles tend to move
-toward the unit circle as $N$ increases and at a certain point they
-fall below the threshold we have set and non-existent spectral lines
-are detected by the algorithm. The magnitude of the poles associated
-to the true spectral lines also tends to be more close to one, so it
-may be possible to adjust the threshold as N increases. {\color{red}
-  proviamo a fare i conti a vedere se viene una relazione da usare
-  nell'algoritmo?}
+When we increase the order $N$ beyond what is needed to model the
+signal we notice that the additional poles tend to move toward the
+unit circle as $N$ increases and at a certain point they fall below
+the threshold we have set and non-existent spectral lines are detected
+by the algorithm. The magnitude of the poles associated to the true
+spectral lines also tends to get closer and closer to one, so it may
+be possible to adjust the threshold as N increases.
 \end{document}

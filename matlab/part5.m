@@ -6,7 +6,7 @@ sigma2w = 0.0002;
 load 'rng_seed_part5'
 [x, k] = generate_x(sigma2w, K, rng_seed_part5);
 
-N = 64;
+N = 32;
 circle_thresh = 1e-2;
 
 r = autocorrelation_unbiased(x, 0);

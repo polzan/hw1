@@ -1,40 +1,30 @@
 close all; clear all; clc;
 
 K = 1000;
-N = 20; 
 sigma2w = 0.0002;
 
 load 'rng_seed_part5'
 [x, k] = generate_x(sigma2w, K, rng_seed_part5);
 
-D = 5; % Everything > 0 should be fine: the broadband sig. is white
-x_delayed = x(D+1:K);
-k_delayed = D:K-1;
+N = 256;
+circle_thresh = 1e-3;
 
-r = autocorrelation_unbiased(x_delayed, 0);
-
-mu_tilde = 0.25;
+r = autocorrelation_unbiased(x, 0);
+mu_tilde = 1;
 mu = mu_tilde/(N*r(1)); %the numerator is mu-tilde
 fprintf('Setting mu tilde to %f\n', mu_tilde);
-fprintf('Setting mu to %f\n', mu);
+fprintf('mu is %f\n', mu);
 
-[c, e, y, k_c, k_ey] = lms_filter(x(1:K-D+1), x_delayed, N, mu);
+[c, e, y, k_c, k_ey] = lms_predictor(x, N, mu);
 
-% figure;
-% plot(k_ey, abs(autocorrelation_unbiased(y, length(k_ey)-1)));
-% 
-% figure;
-% plot(k_ey, abs(autocorrelation_unbiased(e, length(k_ey)-1)));
-
-Nar = N;
-[a, ~] = ar_model(y, Nar);
+a = [1; -c(:,length(k_c))];
 [z,p,~] = tf2zpk(1,a);
 
 figure;
 zplane(z,p);
 print('part5poles', '-depsc');
 
-i_poles = find(abs(abs(p) - 1) <= 1e-3);
+i_poles = find(abs(abs(p) - 1) <= circle_thresh);
 poles = p(i_poles);
 
 thetas = angle(poles);

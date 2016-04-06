@@ -17,13 +17,13 @@ psd_per = 1/K * abs(fft(x)).^2;
 % Welch
 D = 100;
 S = 25;
-win_welch = blackman(D);
+win_welch = hann(D);
 psd_welch = psd_welch_estim(x, win_welch, D, S, f, Fs);
 
 % Correlogram
-r = autocorrelation_unbiased(x);
-win_corr = blackman(K);
-psd_corr = 1/Fs * fft(win_corr .* r);
+r = autocorrelation_unbiased(x, K/5, true);
+win_corr = hann(2*K/5+1);
+psd_corr = 1/Fs * fft(win_corr .* r,1000);
 
 % AR model
 N = 2;

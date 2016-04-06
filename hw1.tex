@@ -10,6 +10,7 @@
 \usepackage{textcomp}
 \usepackage{graphicx}
 \usepackage{xr}
+\usepackage[section]{placeins}
 %\usepackage{hyperref}
 
 \externaldocument{hw1_code}
@@ -116,8 +117,8 @@ needs $N$ samples from the input signal $x(k)$, and at each
 time instant:
 \begin{itemize}
   \item extracts from $x(k)$ the vector $\vec{x}_k = [x(k),
-    x(k-1),\dots,x(k-N+1)]^T$ that is the input to the Wiener filter
-    at time $k$ {\color{red} si chiama veramente così anche questo?}
+    x(k-1),\dots,x(k-N+1)]^T$ that is the input of the adaptive filter
+    at time $k$
   \item computes the filter output $y(k) = \vec{x}_k^H\vec{c}(k)$
   \item computes the error $e(k) = d(k) - y(k)$ where $d(k) = x(k+1)$
     since we want the filter to predict the next sample of the random
@@ -131,12 +132,14 @@ function $e(K-2)$.
 
 The parameters of the LMS algorithm are the order of the filter $N$
 and the adaptation gain $\mu$ and for the first one we choose $N = 2$
-because we want to compare the results with the ones from problem 3
-{\color{red} e anche perchè il filtro Wiener usa gli stessi
-  coefficienti del modello AR?}.  The second parameter $\mu$ must be
-chosen in the interval $\left[0,\frac{2}{Nr_x(0)}\right]$ in order to
-ensure the convergence of $\vec{c}(k)$ and $e(k)$ in the mean sense
-and in the mean square sense,
+because we want to compare the results with the ones from problem 3,
+since the coefficients $\vec{c}_{opt}$ of the Wiener filter should be
+the values that the coefficients $\vec{c}(k)$ of the LMS filter
+converge to.  The second parameter $\mu$ must be chosen in the
+interval $\left[0,\frac{2}{Nr_x(0)}\right]$, where we use the
+theoretical power of the input signal $r_x(0) = 2 + \sigma^2_w$ , in
+order to ensure the convergence of $\vec{c}(k)$ and $e(k)$ in the mean
+sense and in the mean square sense,
 %% \begin{align*}
 %%   \E{\vec{c}(k)} &\rightarrow \vec{c}_{opt} &\text{as} \quad k \rightarrow \infty \\
 %%   \E{e(k)} &\rightarrow 0  &\text{as} \quad k \rightarrow \infty \\
@@ -144,31 +147,32 @@ and in the mean square sense,
 %%   \E{\norm{\vec{c}(k)-\vec{c}_{opt}}^2} &\rightarrow \text{constant} &\text{as} \quad k \rightarrow \infty \\
 %%   \E{\abs{e(k)}^2} &\rightarrow \text{constant} &\text{as} \quad k \rightarrow \infty 
 %% \end{align*}
-where we used as the input autocorrelation $r_x(n)$ {\color{red} the
-  theoretical one}.  We tried the choice that yields the fastest rate
-of convergence of $J(k)$, when $J(k) \gg J_{min}$, from equation
-(3.121) of the textbook: $\mu_{opt} = \frac{1}{Nr_x(0)}$. This value
-of $\mu$ does make the LMS algorithm converge very quickly but the
-value of the MSE at convergence $J(\infty)$ is {\color{red} almost 5
-  dB} over $J_{min}$. A smaller value, like $\tilde{\mu} = 0.25$,
-  provides a good tradeoff between speed of convergence and MSE.
+with the same unbiased estimator we used before.  We tried the choice
+that yields the fastest rate of convergence of $J(k)$ (when $J(k) \gg
+J_{min}$) from equation (3.121) of the textbook: $\mu_{opt} =
+\frac{1}{Nr_x(0)}$. This value of $\mu$ does make the LMS algorithm
+converge very quickly but with a huge misadjustment: the MSD
+$\frac{J(\infty) - J_{min}}{J_{min}} = 0.997$, a smaller value, like
+$\tilde{\mu} = 0.175$, provides a good tradeoff between speed of
+convergence and MSE and allows us to have a misadjustment below 10\%
+(see Fig.~\ref{plot:lms_mse}).
 
-  The input signal $x(k)$ is generated with the same seed value of
-  problem 3 for the random number generator so it is the same
-  realization.
+The input signal $x(k)$ is generated with the same seed value of
+problem 3 for the random number generator so it is the same
+realization.
 
-  After running the LMS predictor we get the following filter
-  coefficients at the last iteration
+After running the LMS predictor we get the following filter
+coefficients at the last iteration
 \begin{align*}
-  c_1(K-1) &= 1.0146 - 0.2445j   \\
-  c_2(K-1) &= -0.8912 + 0.4518j
+  c_1(K-1) &= 1.0151 - 0.2443j   \\
+  c_2(K-1) &= -0.8909 + 0.4525j
 \end{align*}
-{\color{red} these values are very close} to the ones we computed
-using the Wiener-Hopf solution at problem 3. The real and imaginary
-parts of the two coefficients $c_1(k)$ and $c_2(k)$ are plotted as $k$
-varies in Fig.~\ref{plot:coeff_lms_c1} and
-Fig.~\ref{plot:coeff_lms_c2} where we can notice that after $k \approx 100$
-samples they are practically at their convergence values.
+these values are very close to the ones we computed using the
+Wiener-Hopf solution at problem 3. The real and imaginary parts of the
+two coefficients $c_1(k)$ and $c_2(k)$ are plotted as $k$ varies in
+Fig.~\ref{plot:coeff_lms_c1} and Fig.~\ref{plot:coeff_lms_c2} where we
+can notice that after $k \approx 100$ samples they are practically at
+their convergence values.
 %% \begin{table}[h]
 %%   \centering
 %%   \begin{tabular}{>{$}c<{$}>{$}c<{$}>{$}c<{$}}
@@ -195,69 +199,74 @@ samples they are practically at their convergence values.
 
 In Fig.~\ref{plot:lms_mse} we compare the prediction error function
 $e(k)$ obtained from this realization of $x(k)$ with an average over
-200 other realizations of the same input signal.  Along with
-$\abs{e(k)}^2$ and $\E{ \abs{e(k)}^2 }$ we plotted the minimum MSE
-$J_{min} = \sigma^2_x + \vec{r_N}^Hc_{opt}$ obtained when using the
-Wiener-Hopf solution in problem 3 and the value that we expect as $k$
-goes to infinity from equation (3.115) of the textbook:
+200 other realizations of the same process.  Along with the square
+error $\abs{e(k)}^2$ and the MSE $\E{ \abs{e(k)}^2 }$ we plotted the
+minimum MSE $J_{min} = \sigma^2_x + \vec{r_N}^Hc_{opt}$ obtained when
+using the Wiener-Hopf solution in problem 3 and the value that we
+expect as $k$ goes to infinity from equation (3.115) of the textbook:
 \[ J(\infty) = \frac{2}{2-\mu N r_x(0)}J_{min} \]
 \begin{figure}[htbp]
   \centering
   \includegraphics[width=0.7\textwidth]{matlab/lms_mse}
-  \caption{Square error of the LMS predictor}
+  \caption{Square error and MSE of the LMS predictor}
   \label{plot:lms_mse}
 \end{figure}
 From this plot we can see that the MSE of the predictor converges to a
-constant value close to {\color{red} the minimum possible MSE
-  attainable by a linear predictor $J_{min}$} and the value of the MSE
-at convergence remains 0.000088 {\color{red} meglio in dB?} over the
-optimal value.
+constant value $J(\infty)$ close to the minimum possible MSE $J_{min}$
+obtainable by a linear predictor, the MSD is now $0.096$.
 %% in accordance with
 %% what we would expect from equation (3.117) of the textbook:
 %% \[ J_{ex}(\infty) \approx \frac{\mu}{2}Nr_x(0)J_{min}  . \]
 \section*{Problem 5}
-To determine if a random process contains spectral lines, and to
-separate them from the broadband component of the signal we can use a
-LMS adaptive filter in the way depicted in
-Fig.~\ref{sch:lms_delay}. In this schema we use the original random
-process $x(k)$ as the desired output $d(k)$ of the LMS filter and its
-delayed version $x(k - D)$ as the input of the filter. If we choose a
-big enough $D$ the broadband component of the delayed signal becomes
-uncorrelated from the original signal, while the correlation of the
-narrowband components is not affected by the delay as it is periodic.
-So the filter tries to minimize the error $e(k) = x(k) - y(k)$ by
-suppressing the broadband component of its input signal and leaving
-the spectral lines unaltered, in this way we get as output $y(k)$ the
-spectral lines of the original process and as error function $e(k)$ we
-get the broadband component of $x(k)$.  In our case the broadband
-component is just white noise, so any $D \geq 1$ is enough, we choose
-$D=5$ {\color{red} just to be safe}. For the parameters of the LMS
-filter we choose the same order $N=2$ and the same $\tilde{\mu} =
-0.25$ of problem 4 as the {\color{red} input signal is the same}. The
-algorithm is implemented by extending the \inlinecode{lms_predictor}
-function to deal with a generic desired signal $d(k)$ (see
-\inlinecode{lms_filter}, Lst.~\ref{lst:lms_filter}).{\color{red} anche
-  i grafici delle uscite?}
+To determine if a random process contains spectral lines we can try to
+model it as an AR process and determine the lines' frequencies from
+the poles of the transfer function of the filter that generates the
+process from white noise. Since the lines have very high amplitude,
+they will correspond to some poles that are close to the unit circle,
+while the other poles will have a smaller magnitude (unless the PSD of
+the broadband component has an amplitude comparable to the one of the
+lines). After we have identified the poles associated to the spectral
+lines we can obtain the frequencies $f_i$ from the phases $\theta_i$
+of each pole traslated into the $[0,2\pi]$ interval: $f_i =
+\frac{\theta_i}{2\pi}F_s$.
 
-After we have extracted the spectral lines from the rest of the signal
-we can model them as an AR(N) process like in problems 1 and 2, with
-the same order $N$ as the LMS filter. Then from the estimated
-coefficients $a_i$ we compute the poles of the transfer function
-\[ \frac{1}{A(z)} = \frac{1}{\sum_{i=0}^{N}a_iz^{-i}} , \]
-from which we can obtain the angular frequency of each spectral line
-by taking the phase of the poles that lie on the unit circle.  In our
-code we consider a pole to be on the unit circle if its magnitude is
-$|p_i| \in [1-10^{-3},1+10^{-3}]$.
+Since the Wiener-Hopf solution for the predictior filter and the
+Yule-Walker equation that gives us the solution for the AR coefficients
+are similar:
+\[ R\vec{a} = -\vec{r} \]
+we can approximate the coefficients $\vec{c}_{opt}$ using the same LMS
+algorithm used in problem 4 and get the AR coefficients as $ \vec{a} =
+-\vec{c}_{opt}$. In this case we do not care about the power of the
+white noise input of the AR filter since we only need the position of
+the poles of the filter.
 
-When we increase the order $N$ beyond what is needed to model the
-signal we notice that the additional poles tend to move toward the
-unit circle as $N$ increases and at a certain point they fall below
-the threshold we have set and non-existent spectral lines are detected
-by the algorithm. The magnitude of the poles associated to the true
-spectral lines also tends to be more close to one, so it may be
-possible to adjust the threshold as N increases. {\color{red} proviamo a fare i conti a vedere se viene una relazione da usare nell'algoritmo?}
+The order of the LMS filter $N$ must be chosen to be at least equal to
+the number of spectral lines present in $x(k)$ to detect all of
+them. In our case $N=2$ would be enough, but we try with $N=64$ to see
+where the other poles end up. This time we do not care about the value
+at convergence of $\E{\abs{e(k)}^2}$, {\color{red} but we do about the
+  error of the coefficients $\E{\abs{\Delta}}$adaptive gain of the LMS
+  filter $\tilde{\mu} = 0.175$}
 
-We could also model directly the signal $x(k)$ as an AR process
-without first separating it into the broadband and narrowband
-components, but in this way we also have the filtered signal.
+If we consider each pole to be on the unit circle when its magnitude
+$|p_i|$ is in the interval $[1-10^{-2},1+10^{-2}]$ we can identify the
+frequencies of the two complex exponentials in the signal $x(k)$. In
+Fig.~\ref{plot:part5_poles} we can see the poles of the transfer
+function.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/part5_poles}
+  \caption{Poles of the AR filter}
+  \label{plot:part5_poles}
+\end{figure}
+
+When we increase the order $N$ beyond what is needed
+to model the signal we notice that the additional poles tend to move
+toward the unit circle as $N$ increases and at a certain point they
+fall below the threshold we have set and non-existent spectral lines
+are detected by the algorithm. The magnitude of the poles associated
+to the true spectral lines also tends to be more close to one, so it
+may be possible to adjust the threshold as N increases. {\color{red}
+  proviamo a fare i conti a vedere se viene una relazione da usare
+  nell'algoritmo?}
 \end{document}

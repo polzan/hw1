@@ -10,6 +10,7 @@
 \usepackage{textcomp}
 \usepackage{graphicx}
 \usepackage{xr}
+\usepackage[section]{placeins}
 %\usepackage{hyperref}
 
 \externaldocument{hw1_code}
@@ -94,10 +95,11 @@ with the same unbiased estimator we used before.  We tried the choice
 that yields the fastest rate of convergence of $J(k)$ (when $J(k) \gg
 J_{min}$) from equation (3.121) of the textbook: $\mu_{opt} =
 \frac{1}{Nr_x(0)}$. This value of $\mu$ does make the LMS algorithm
-converge very quickly but the value of the MSE at convergence
-$J(\infty)$ is more than \SI{3}{\dB} over $J_{min}$ (and $J_{ex} =
-6.17\cdot10^{-4}$). A smaller value, like $\tilde{\mu} = 0.25$,
-provides a good tradeoff between speed of convergence and MSE.
+converge very quickly but with a huge misadjustment: the MSD
+$\frac{J(\infty) - J_{min}}{J_{min}} = 0.997$, a smaller value, like
+$\tilde{\mu} = 0.175$, provides a good tradeoff between speed of
+convergence and MSE and allows us to have a misadjustment below 10\%
+(see Fig.~\ref{plot:lms_mse}).
 
 The input signal $x(k)$ is generated with the same seed value of
 problem 3 for the random number generator so it is the same
@@ -106,8 +108,8 @@ realization.
 After running the LMS predictor we get the following filter
 coefficients at the last iteration
 \begin{align*}
-  c_1(K-1) &= 1.0146 - 0.2445j   \\
-  c_2(K-1) &= -0.8912 + 0.4518j
+  c_1(K-1) &= 1.0151 - 0.2443j   \\
+  c_2(K-1) &= -0.8909 + 0.4525j
 \end{align*}
 these values are very close to the ones we computed using the
 Wiener-Hopf solution at problem 3. The real and imaginary parts of the
@@ -155,10 +157,7 @@ expect as $k$ goes to infinity from equation (3.115) of the textbook:
 \end{figure}
 From this plot we can see that the MSE of the predictor converges to a
 constant value $J(\infty)$ close to the minimum possible MSE $J_{min}$
-obtainable by a linear predictor, the excess MSE $J_{ex} =
-8.82\cdot10^{-5}$ is almost ten times lower than before and the value
-of the MSE at convergence remains \SI{0.58}{\dB} over the optimal
-value.
+obtainable by a linear predictor, the MSD is now $0.096$.
 %% in accordance with
 %% what we would expect from equation (3.117) of the textbook:
 %% \[ J_{ex}(\infty) \approx \frac{\mu}{2}Nr_x(0)J_{min}  . \]

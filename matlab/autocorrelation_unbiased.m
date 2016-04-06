@@ -4,7 +4,7 @@ if nargin < 2
     N = K-1;
 end
 if nargin < 3
-    whole = false
+    whole = false;
 end
 
 s = size(x);
@@ -23,7 +23,6 @@ for n = 0:N
 end
 
 if whole
-r = [flip(conj(r(2:N+1)));r];
+    r = [flip(conj(r(2:N+1))); r];
 end
-
 end

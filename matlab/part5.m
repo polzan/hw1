@@ -6,8 +6,8 @@ sigma2w = 0.0002;
 load 'rng_seed_part5'
 [x, k] = generate_x(sigma2w, K, rng_seed_part5);
 
-N = 256;
-circle_thresh = 1e-3;
+N = 64;
+circle_thresh = 1e-2;
 
 r = autocorrelation_unbiased(x, 0);
 mu_tilde = 1;
@@ -22,7 +22,7 @@ a = [1; -c(:,length(k_c))];
 
 figure;
 zplane(z,p);
-print('part5poles', '-depsc');
+print('part5_poles', '-depsc');
 
 i_poles = find(abs(abs(p) - 1) <= circle_thresh);
 poles = p(i_poles);

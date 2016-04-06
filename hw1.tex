@@ -162,48 +162,55 @@ obtainable by a linear predictor, the MSD is now $0.096$.
 %% what we would expect from equation (3.117) of the textbook:
 %% \[ J_{ex}(\infty) \approx \frac{\mu}{2}Nr_x(0)J_{min}  . \]
 \section*{Problem 5}
-To determine if a random process contains spectral lines, and to
-separate them from the broadband component of the signal we can use a
-LMS adaptive filter in the way depicted in
-Fig.~\ref{sch:lms_delay}. In this schema we use the original random
-process $x(k)$ as the desired output $d(k)$ of the LMS filter and its
-delayed version $x(k - D)$ as the input of the filter. If we choose a
-big enough $D$ the broadband component of the delayed signal becomes
-uncorrelated from the original signal, while the correlation of the
-narrowband components is not affected by the delay as it is periodic.
-So the filter tries to minimize the error $e(k) = x(k) - y(k)$ by
-suppressing the broadband component of its input signal and leaving
-the spectral lines unaltered, in this way we get as output $y(k)$ the
-spectral lines of the original process and as error function $e(k)$ we
-get the broadband component of $x(k)$.  In our case the broadband
-component is just white noise, so any $D \geq 1$ is enough, we choose
-$D=5$ {\color{red} just to be safe}. For the parameters of the LMS
-filter we choose the same order $N=2$ and the same $\tilde{\mu} =
-0.25$ of problem 4 as the {\color{red} input signal is the same}. The
-algorithm is implemented by extending the \inlinecode{lms_predictor}
-function to deal with a generic desired signal $d(k)$ (see
-\inlinecode{lms_filter}, Lst.~\ref{lst:lms_filter}).{\color{red} anche
-  i grafici delle uscite?}
+To determine if a random process contains spectral lines we can try to
+model it as an AR process and determine the lines' frequencies from
+the poles of the transfer function of the filter that generates the
+process from white noise. Since the lines have very high amplitude,
+they will correspond to some poles that are close to the unit circle,
+while the other poles will have a smaller magnitude (unless the PSD of
+the broadband component has an amplitude comparable to the one of the
+lines). After we have identified the poles associated to the spectral
+lines we can obtain the frequencies $f_i$ from the phases $\theta_i$
+of each pole traslated into the $[0,2\pi]$ interval: $f_i =
+\frac{\theta_i}{2\pi}F_s$.
 
-After we have extracted the spectral lines from the rest of the signal
-we can model them as an AR(N) process like in problems 1 and 2, with
-the same order $N$ as the LMS filter. Then from the estimated
-coefficients $a_i$ we compute the poles of the transfer function
-\[ \frac{1}{A(z)} = \frac{1}{\sum_{i=0}^{N}a_iz^{-i}} , \]
-from which we can obtain the angular frequency of each spectral line
-by taking the phase of the poles that lie on the unit circle.  In our
-code we consider a pole to be on the unit circle if its magnitude is
-$|p_i| \in [1-10^{-3},1+10^{-3}]$.
+Since the Wiener-Hopf solution for the predictior filter and the
+Yule-Walker equation that gives us the solution for the AR coefficients
+are similar:
+\[ R\vec{a} = -\vec{r} \]
+we can approximate the coefficients $\vec{c}_{opt}$ using the same LMS
+algorithm used in problem 4 and get the AR coefficients as $ \vec{a} =
+-\vec{c}_{opt}$. In this case we do not care about the power of the
+white noise input of the AR filter since we only need the position of
+the poles of the filter.
 
-When we increase the order $N$ beyond what is needed to model the
-signal we notice that the additional poles tend to move toward the
-unit circle as $N$ increases and at a certain point they fall below
-the threshold we have set and non-existent spectral lines are detected
-by the algorithm. The magnitude of the poles associated to the true
-spectral lines also tends to be more close to one, so it may be
-possible to adjust the threshold as N increases. {\color{red} proviamo a fare i conti a vedere se viene una relazione da usare nell'algoritmo?}
+The order of the LMS filter $N$ must be chosen to be at least equal to
+the number of spectral lines present in $x(k)$ to detect all of
+them. In our case $N=2$ would be enough, but we try with $N=64$ to see
+where the other poles end up. This time we do not care about the value
+at convergence of $\E{\abs{e(k)}^2}$, {\color{red} but we do about the
+  error of the coefficients $\E{\abs{\Delta}}$adaptive gain of the LMS
+  filter $\tilde{\mu} = 0.175$}
 
-We could also model directly the signal $x(k)$ as an AR process
-without first separating it into the broadband and narrowband
-components, but in this way we also have the filtered signal.
+If we consider each pole to be on the unit circle when its magnitude
+$|p_i|$ is in the interval $[1-10^{-2},1+10^{-2}]$ we can identify the
+frequencies of the two complex exponentials in the signal $x(k)$. In
+Fig.~\ref{plot:part5_poles} we can see the poles of the transfer
+function.
+\begin{figure}[htbp]
+  \centering
+  \includegraphics[width=0.7\textwidth]{matlab/part5_poles}
+  \caption{Poles of the AR filter}
+  \label{plot:part5_poles}
+\end{figure}
+
+When we increase the order $N$ beyond what is needed
+to model the signal we notice that the additional poles tend to move
+toward the unit circle as $N$ increases and at a certain point they
+fall below the threshold we have set and non-existent spectral lines
+are detected by the algorithm. The magnitude of the poles associated
+to the true spectral lines also tends to be more close to one, so it
+may be possible to adjust the threshold as N increases. {\color{red}
+  proviamo a fare i conti a vedere se viene una relazione da usare
+  nell'algoritmo?}
 \end{document}

@@ -53,7 +53,7 @@
 \section*{Problem 1}
 Before describing the results we obtained solving this point, we want to briefly describe some useful functions we used several times to solve the homework:
 \begin{itemize}
- \item the function \inlinecode{generate_x} (Lst.~\ref{lst:generate_x}) generates a realization of the required random process, given the variance of the Gaussian noise and the length of the realization (in number of samples) we want to consider. We can also control the realization we are observing through the parameter \inlinecode{'seed'} that is usefull if we want to compare the results of the different settings for a specific realization; 
+ \item the function \inlinecode{generate_x} (Lst.~\ref{lst:generate_x}) generates a realization of the required random process, given the variance of the Gaussian noise and the length of the realization (in number of samples) we want to consider. We can also control the realization we are observing through the parameter \inlinecode{'seed'} that is useful if we want to compare the results of the different settings for a specific realization; 
  \item the function \inlinecode{autocorrelation_unbiased} (Lst.~\ref{lst:autocorrelation_unbiased}) returns an unbiased estimator of the process autocorrelation given a process realization, by applying $\hat{r}_x(n) = \frac{1}{K-n} \sum_{k=n}^{K-1} {x(k)x^*(k-n)}$ for $n = 0,1,..N$ where N is the maximum lag we want to estimate ($0\leq N \leq K-1$);
  \item the function \inlinecode{autocorrelation_biased} (Lst.~\ref{lst:autocorrelation_biased}) returns a biased estimator of the same quantity, starting from the unbiased one, through the relation $\breve{r}_x(n) = \bigl( 1 - \frac{|n|}{K}\bigr) \hat{r}_x(n)$ for $n = 0,1,..N$;
  \item  the function \inlinecode{theoretical_autocorr} (Lst.~\ref{lst:theoretical_autocorr}) gives us the values of the autocorrelation function obtained by analysis $r_x (n) =  \E{x(k)x^*(k-n)}$ that in our case is: $r_x (n) = e^{j2 \pi f_1n} + e^{j2\pi f_2n} + \sigma_w^2 \delta_n$.
@@ -79,7 +79,7 @@ To solve Problem 1 we firstly computed our reference PSD by using the \inlinecod
  \item[c)] For the Welch method we have implemented the \inlinecode{psd_welch_estim} (Lst.~\ref{lst:psd_welch_estim}) function. The input parameters we need to set correctly in order to reach the best results are:
  \begin{itemize}
  \item the kind of window we want to use $w$,
- \item the length of each subsequence we are considering $D$, 
+ \item the length of each sub-sequence we are considering $D$, 
  \item the number of samples we want to overlap between two consecutive sequences $S$. 
 \end{itemize} 
 The function uses the $D$ and $S$ values to find the number of segments $N_s = \bigl\lfloor \frac{K-D}{D-S} -1\bigl\rfloor $ in which we are dividing our signal. Computes the normalized energy of the chosen window $M_w = \frac{1}{D} \sum_{k=1}^{D} {\abs{w(k)}^2} $ and for each segment (s) computes the Periodogram $P_{PER}^{(s)} = \frac{1}{D T_c M_w} |\tilde{X}(f)|$. Stored the value of each $P_{PER}^{(s)}$ in the columns of an auxiliary matrix we finally do the mean between columns to finally get $P_{we}(f) = \frac{1}{N_s} \sum_{s=0}^{N_s-1} P_{PER}^{(s)} $
@@ -270,7 +270,7 @@ to equation (3.81) of the textbook extended to the general case,
 If we use as input a realization of the same process of problems 2-4
 then $J_{min} = 1.7\cdot10^{-4}$ and we use an adaptive gain with
 $\tilde{\mu} = 1$, so that we maximize the speed of convergence, we
-get an MSE on the coefficents with an order of magnitude of $10^{-6}$,
+get an MSE on the coefficients with an order of magnitude of $10^{-6}$,
 so we can use this value for $\tilde{\mu}$.
 
 If we consider each pole to be on the unit circle when its magnitude

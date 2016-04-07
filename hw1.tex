@@ -64,12 +64,12 @@ Before describing the results we obtained solving this point, we want to briefly
    filter and the kind of autocorrelation estimator we want to use, it
    solves the Yule-Walker equation
    \[ R\vec{a} = -\vec{r} \]
-   and estimates the power of the white noise which is is the input of
-   the filter $\frac{1}{A(z)}$ in the AR model of the process using the equation
+   and estimates the power of the white noise, which is is the input of
+   the filter $\frac{1}{A(z)}$ in the AR model of the process, using the equation
    \[ \sigma^2_w = r_x(0) + \vec{r}^H\vec{a} . \]
    Finally it returns the filter coefficients and the estimated $\sigma^2_w$.
 \end{itemize}
-To solve Problem 1 we firstly computed our reference PSD by using the \inlinecode{theoretical_psd} (Lst.~\ref{lst:theoretical_psd}) function. It computes the PSD as the sum of the constant $\sigma_w^2$ (PSD of the white noise, given in input) and the two spectral lines in $f1$ and $f2$ (replaced by triangles of height $K$ and base $2K$ as required). In our settings we consider $T_c = F_s = 1$.
+To solve Problem 1 we firstly computed our reference PSD by using the \inlinecode{theoretical_psd} (Lst.~\ref{lst:theoretical_psd}) function. It computes the PSD as the sum of the constant $\sigma_w^2$ (PSD of the white noise, given in input) and the two spectral lines in $f_1$ and $f_2$ (replaced by triangles of height $K$ and base $2K$ as required). In our settings we consider $T_c = F_s = 1$.
 %\newline In order to estimate the PSD by anaysing a realization of the process we have %used an unbiased estimator $\hat{r}_x(n)$ because it is the one with the smaller variance %and, by testing, it give us the better results.
 \begin{itemize}
 \item[a)] For the Correlogram method, we implement the relation
